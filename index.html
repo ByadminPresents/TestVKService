@@ -24,7 +24,7 @@
           const deviceId = payload.device_id;
   
           VKID.Auth.exchangeCode(code, deviceId)
-            .then((result) => console.log(result.access_token))
+            .then(vkidOnSuccess)
             .catch(vkidOnError);
         });
       
