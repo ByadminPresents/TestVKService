@@ -10,6 +10,8 @@
           responseMode: VKID.ConfigResponseMode.Callback,
           source: VKID.ConfigSource.LOWCODE,
           scope: '', // Заполните нужными доступами по необходимости
+          state: '1',
+          codeChallenge: '12345',
         });
   
         const oneTap = new VKID.OneTap();
