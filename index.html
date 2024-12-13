@@ -17,7 +17,7 @@
 
         fetch("https://92.255.165.189:59917/VKID/GetNewLoginTokens", {
                 method: 'POST',
-                credentials: 'same-origin' // Отправлять cookie с запросом
+                credentials: 'include' // Отправлять cookie с запросом
             })
             .then((response) => {
                 if (!response.ok) {
