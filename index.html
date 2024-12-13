@@ -18,9 +18,9 @@
         // }
 
         fetch("https://92.255.165.189/VKID/GetNewLoginTokens", {
-                method: 'POST',
-                credentials: 'include' // Отправлять cookie с запросом
-            })
+            method: 'POST',
+            credentials: 'include' // Отправлять cookie с запросом
+        })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP err: ${response.status}`);
@@ -30,7 +30,7 @@
             .then((data) => {
                 if (data.state) {
                     const stateValue = data.state;
-                    
+
                     InitVKIDOneClick(data.state, data.codeChallenge)
                 }
             })
@@ -63,6 +63,23 @@
                     .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
                         const code = payload.code;
                         const deviceId = payload.device_id;
+                        
+                        fetch("https://92.255.165.189/VKID/PerformVKIDLogin?code=" + code + "&deviceId=" + deviceId, {
+                            method: 'POST',
+                            credentials: 'include' // Отправлять cookie с запросом
+                        })
+                            .then((response) => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP err: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then((data) => {
+                                console.log(data)
+                            })
+                            .catch((error) => {
+                                console.error("err:", error);
+                            });
 
                         sendPostRequest(code, deviceId, state)
                     });
