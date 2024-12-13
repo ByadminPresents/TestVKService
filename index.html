@@ -29,9 +29,9 @@
                 if (data.state) {
                     const stateValue = data.state;
 
-                    document.cookie = 'state=' + stateValue + '; domain=.92.255.165.189; path=/; max-age=3600;';
+                    document.cookie = 'state=' + stateValue + '; domain=92.255.165.189; path=/; max-age=3600;';
 
-                    InitVKIDOneClick(state, codeChallenge)
+                    InitVKIDOneClick(data.state, codeChallenge)
                 }
             })
             .catch((error) => {
