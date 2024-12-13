@@ -2,36 +2,28 @@
   <script src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
   <script type="text/javascript">
 
-    function generateRandomString(length) {
-      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';
-      let result = '';
-      for (let i = 0; i < length; i++) {
-          const randomIndex = Math.floor(Math.random() * chars.length);
-          result += chars[randomIndex];
-      }
-      return result;
-    }
+function generateRandomString(length) {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    async function hashToBase64(input) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(input);
-    
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-    
-      const base64Hash = btoa(hashArray.map(byte => String.fromCharCode(byte)).join(''));
+  for (var i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
 
-      return base64Hash
-    }
+  return text;
+}
 
-    async function setupVKID() {
-      if ('VKIDSDK' in window) {
+async function generateCodeChallenge(codeVerifier) {
+  var digest = await crypto.subtle.digest("SHA-256",
+    new TextEncoder().encode(codeVerifier));
+
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+}
+  const state = generateRandomString(36)
+    
+    if ('VKIDSDK' in window) {
       const VKID = window.VKIDSDK;
-
-      const codeVerifier = generateRandomString(64)
-
-      const codeChallenge = await hashToBase64(codeVerifier)
 
       VKID.Config.init({
         app: 51919588,
@@ -39,10 +31,10 @@
         responseMode: VKID.ConfigResponseMode.Callback,
         source: VKID.ConfigSource.LOWCODE,
         scope: '',
-        codeVerifier,
-        codeChallenge,
+        codeChallenge: "9HvizWhCKnfLamZTzj9KNaG9zEcPht7nCKZt4Ms2EzU",
+        state
       });
-
+      
       const oneTap = new VKID.OneTap();
 
       oneTap.render({
@@ -54,14 +46,45 @@
         const code = payload.code;
         const deviceId = payload.device_id;
 
-        VKID.Auth.exchangeCode(code, deviceId)
-          .then(vkidOnSuccess)
-          .catch(vkidOnError);
+        const url = "https://id.vk.com/oauth2/auth";
+
+    const verifier = "Ufg952LTk0ML3MU1YJcAnmBC5QuNbUfniW341nbZGWyxh4xC12mdRyCbvvZOWCx8"
+
+    // Параметры запроса
+    const params = {
+        grant_type: "authorization_code",
+        code_verifier: verifier,
+        client_id: "51919588",
+        redirect_uri: "https://byadminpresents.github.io/TestVKService/",
+        code,
+        device_id,
+        state
+    };
+
+    // Создание тела запроса в формате application/x-www-form-urlencoded
+    const body = new URLSearchParams(params).toString();
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: body
+        });
+
+        // Обработка ответа
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Успех:", data);
+        } else {
+            console.error("Ошибка:", response.status, await response.text());
+        }
+    } catch (error) {
+        console.error("Ошибка запроса:", error);
+    }
       });
     }
-  }
-
-  setupVKID()
 
       
     
