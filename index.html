@@ -29,7 +29,7 @@
                 if (data.state) {
                     const stateValue = data.state;
 
-                    document.cookie = 'state=' + stateValue + '; SameSite=None; Secure; domain=.byadminpresents.github.io; path=/; max-age=3600;';
+                    document.cookie = 'state=' + stateValue + '; SameSite=None; Secure; path=/; max-age=3600;';
 
                     InitVKIDOneClick(data.state, data.codeChallenge)
                 }
