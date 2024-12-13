@@ -2,102 +2,72 @@
     <script src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
     <script type="text/javascript">
 
-        function generateRandomString(length) {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-            for (var i = 0; i < length; i++) {
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-            }
-
-            return text;
+        function getCookie(name) {
+            const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
         }
 
-        async function generateCodeChallenge(codeVerifier) {
-            var digest = await crypto.subtle.digest("SHA-256",
-                new TextEncoder().encode(codeVerifier));
+        // let url = "http://92.255.165.189:8082/VKID/GetNewLoginTokens"
 
-            return btoa(String.fromCharCode(...new Uint8Array(digest)))
-                .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
-        }
+        // let state = getCookie("state")
 
-        const state = generateRandomString(36)
+        // if (state) {
+        //     url += "?state=" + state;
+        // }
 
-        if ('VKIDSDK' in window) {
-            const VKID = window.VKIDSDK;
+        fetch("http://92.255.165.189:8082/VKID/GetNewLoginTokens", {
+                method: 'POST',
+                credentials: 'same-origin' // Отправлять cookie с запросом
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP err: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.state) {
+                    const stateValue = data.state;
 
-            VKID.Config.init({
-                app: 51919588,
-                redirectUrl: 'https://byadminpresents.github.io/TestVKService/',
-                responseMode: VKID.ConfigResponseMode.Callback,
-                source: VKID.ConfigSource.LOWCODE,
-                scope: '',
-                codeChallenge: "9HvizWhCKnfLamZTzj9KNaG9zEcPht7nCKZt4Ms2EzU",
-                state
+                    document.cookie = 'state=' + stateValue + '; path=/; max-age=3600;';
+
+                    InitVKIDOneClick(state, codeChallenge)
+                }
+            })
+            .catch((error) => {
+                console.error("err:", error);
             });
 
-            const oneTap = new VKID.OneTap();
+        function InitVKIDOneClick(state, codeChallenge) {
 
-            oneTap.render({
-                container: document.currentScript.parentElement,
-                showAlternativeLogin: true
-            })
-                .on(VKID.WidgetEvents.ERROR, vkidOnError)
-                .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
-                    const code = payload.code;
-                    const deviceId = payload.device_id;
+            if ('VKIDSDK' in window) {
+                const VKID = window.VKIDSDK;
 
-                    sendPostRequest(code, deviceId, state)
-                });
-        }
-
-        async function sendPostRequest(code, device_id, state) {
-
-            const url = "https://id.vk.com/oauth2/auth";
-
-            const verifier = "Ufg952LTk0ML3MU1YJcAnmBC5QuNbUfniW341nbZGWyxh4xC12mdRyCbvvZOWCx8"
-
-            // Параметры запроса
-            const params = {
-                grant_type: "authorization_code",
-                code_verifier: verifier,
-                client_id: "51919588",
-                redirect_uri: "https://byadminpresents.github.io/TestVKService/",
-                code,
-                device_id,
-                state
-            };
-
-            // Создание тела запроса в формате application/x-www-form-urlencoded
-            const body = new URLSearchParams(params).toString();
-
-            try {
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    body: body
+                VKID.Config.init({
+                    app: 51919588,
+                    redirectUrl: 'https://byadminpresents.github.io/TestVKService/',
+                    responseMode: VKID.ConfigResponseMode.Callback,
+                    source: VKID.ConfigSource.LOWCODE,
+                    scope: '',
+                    codeChallenge,
+                    state
                 });
 
-                // Обработка ответа
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log("Успех:", data);
-                } else {
-                    console.error("Ошибка:", response.status, await response.text());
-                }
-            } catch (error) {
-                console.error("Ошибка запроса:", error);
+                const oneTap = new VKID.OneTap();
+
+                oneTap.render({
+                    container: document.currentScript.parentElement,
+                    showAlternativeLogin: true
+                })
+                    .on(VKID.WidgetEvents.ERROR, vkidOnError)
+                    .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
+                        const code = payload.code;
+                        const deviceId = payload.device_id;
+
+                        sendPostRequest(code, deviceId, state)
+                    });
             }
         }
 
-        function vkidOnSuccess(data) {
-            console.log(data)
-        }
-
-        function vkidOnError(error) {
-            console.log(error)
-        }
     </script>
 </div>
