@@ -1,0 +1,420 @@
+.context-card-container {
+    width: 100%;
+    height: 200px;
+    background: transparent;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    transition: height 0.6s;
+}
+
+.context-card-extended-container {
+    width: 100%;
+    height: 270px;
+    background: transparent;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    transition: height 0.6s;
+}
+
+.profile-link {
+    text-decoration: none;
+    color: #75cdd9;
+    display: flex;
+}
+
+.context-card {
+    width: 100%;
+    height: 194px;
+    background: #454545;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: height 0.6s;
+}
+
+.context-card-cover {
+    height: 100px;
+    width: 100%;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-size: cover;
+    background-position: center;
+}
+
+@property --context-card-extended-container-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #dfdfdf;
+}
+
+@property --context-card-extended-container-background-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #454545;
+}
+
+@property --context-card-extended-container-profile-link-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #dfdfdf;
+}
+
+
+
+.context-card-extended-container>.context-card {
+    height: 264px;
+    color: var(--context-card-extended-container-color);
+    background-color: var(--context-card-extended-container-background-color);
+}
+
+.context-card-extended-loading {
+    pointer-events: none;
+    background-color: #454545;
+    height: inherit;
+    width: inherit;
+    top: 0px;
+    /* left: 20px; */
+    border-radius: 20px;
+    z-index: 10;
+    position: absolute;
+    opacity: 0%;
+    transition: opacity 0.3s;
+}
+
+.loading-in-progress {
+    opacity: 100%;
+}
+
+.context-card-info-container {
+    position: relative;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.context-card-info-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    justify-content: center;
+    color: #dfdfdf;
+}
+
+.context-card-additional-info-container {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    height: 74px;
+}
+
+.context-card-additional-info {
+    margin: 0;
+    color: #dfdfdf;
+}
+
+
+.context-card-avatar {
+    width: 58px;
+    height: 58px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #919191;
+    position: relative;
+    object-fit: contain;
+}
+
+.context-card-buttons-container {
+    position: relative;
+    left: 10%;
+    width: 80%;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    justify-content: right;
+}
+
+.context-card-button {
+    height: 30px;
+    width: 30px;
+    padding: unset;
+}
+
+
+@property --wipe-position {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 140%;
+}
+
+.wipe {
+    --wipe-position: 140%;
+    --gradient-length: 40%;
+    mask-image: linear-gradient(to top,
+            transparent,
+            transparent calc(var(--wipe-position) - var(--gradient-length)),
+            black var(--wipe-position));
+    -webkit-mask-image: linear-gradient(to top,
+            transparent,
+            transparent calc(var(--wipe-position) - var(--gradient-length)),
+            black var(--wipe-position));
+    transition: --wipe-position 400ms;
+}
+
+.name-text-container {
+    height: 100%;
+    display: table;
+}
+
+.name-text-container h3 {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.link {
+    width: 112px;
+    height: 47px;
+    border-bottom: 1px solid black;
+    position: absolute;
+}
+
+
+
+/* HTML: <div class="loader"></div> */
+.spinner {
+    pointer-events: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 6px solid #858585;
+    animation: spinner-1 0.8s infinite linear alternate,
+        spinner-2 1.6s infinite linear;
+}
+
+@keyframes spinner-1 {
+    0% {
+        clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+    }
+
+    12.5% {
+        clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%);
+    }
+
+    25% {
+        clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%);
+    }
+
+    50% {
+        clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
+    }
+
+    62.5% {
+        clip-path: polygon(50% 50%, 100% 0, 100% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
+    }
+
+    75% {
+        clip-path: polygon(50% 50%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50% 100%, 0% 100%);
+    }
+
+    100% {
+        clip-path: polygon(50% 50%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 0% 100%);
+    }
+}
+
+@keyframes spinner-2 {
+    0% {
+        transform: scaleY(1) rotate(0deg);
+    }
+
+    49.99% {
+        transform: scaleY(1) rotate(135deg);
+    }
+
+    50% {
+        transform: scaleY(-1) rotate(0deg);
+    }
+
+    100% {
+        transform: scaleY(-1) rotate(-135deg);
+    }
+}
+
+.lock {
+    background: gray;
+    border-radius: 3px;
+    width: 25px;
+    height: 20px;
+    margin-top: 60px;
+    margin-left: 60px;
+    position: relative;
+}
+
+.lock:before {
+    content: "";
+    display: block;
+    position: absolute;
+    border: 3px solid gray;
+    top: -14px;
+    left: 2.3px;
+    width: 15px;
+    height: 27px;
+    border-radius: 35px 35px 0 0;
+}
+
+body,
+html {
+    font-family: Arial, sans-serif;
+    height: 98%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1d1d1d;
+}
+
+
+.container {
+    height: 100%;
+    margin: auto;
+    display: flex;
+    gap: 20px;
+}
+
+.control-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-container {
+    height: 100%;
+    max-height: 400px;
+    background-color: #454545;
+    align-items: center;
+    display: flex;
+    border-radius: 20px;
+}
+
+.filter {
+    max-width: 95%;
+    margin: auto;
+}
+
+.filter label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #dfdfdf;
+    padding-bottom: 8px;
+    padding-left: 4px;
+}
+
+.filter input,
+.filter select {
+    width: 100%;
+    padding: 0px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #777777;
+    background-color: #474747;
+    border-radius: 4px;
+}
+
+.filter input,
+.filter select textarea {
+    color: #ffffff;
+    box-sizing: border-box;
+    padding-left: 6px;
+}
+
+.filter ::placeholder {
+    color: #c6c6c6;
+}
+
+.filter button {
+    width: 100%;
+    padding: 10px;
+    background-color: #dfdfdf;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease
+}
+
+.filter button:hover {
+    background-color: rgb(176, 176, 176);
+}
+
+.filter .item-selector {
+    color: #c6c6c6
+}
+
+.result-elements {
+    width: 320px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #454545;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+}
+
+.result-elements::-webkit-scrollbar {
+    display: none;
+}
+
+.card {
+    scroll-snap-align: start;
+    width: 320px;
+    height: 80px;
+    background: #6e6e6e;
+    border-radius: 20px;
+    color: rgb(223, 223, 223);
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.card.show-card {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card-avatar {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    height: 100%;
+    position: relative;
+}
+
+.name_text_container {
+    width: calc(67%);
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.name_text_container h3 {
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
