@@ -9,14 +9,6 @@
 
         const mainElement = document.currentScript.parentElement
 
-        // let url = "http://92.255.165.189:8082/VKID/GetNewLoginTokens"
-
-        // let state = getCookie("state")
-
-        // if (state) {
-        //     url += "?state=" + state;
-        // }
-
         fetch("https://92.255.165.189/VKID/GetNewLoginTokens", {
             method: 'POST',
             credentials: 'include' // Отправлять cookie с запросом
@@ -53,14 +45,15 @@
                     state
                 });
 
-                const oneTap = new VKID.OneTap();
+                const floatingOneTap = new VKID.FloatingOneTap();
 
-                oneTap.render({
-                    container: mainElement,
-                    showAlternativeLogin: true
-                })
+                floatingOneTap.render({
+                    scheme: 'dark',
+                    appName: 'TestApp',
+                     showAlternativeLogin: true
+                    })
                     .on(VKID.WidgetEvents.ERROR, vkidOnError)
-                    .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
+                    .on(VKID.FloatingOneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
                         const code = payload.code;
                         const deviceId = payload.device_id;
                         
