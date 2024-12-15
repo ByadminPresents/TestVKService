@@ -1,87 +1,375 @@
-<div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link  href="https://raw.githubusercontent.com/ByadminPresents/TestVKService/refs/heads/main/style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
-    <script type="text/javascript">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Filters</title>
+</head>
 
-        function getCookie(name) {
-            const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-            return matches ? decodeURIComponent(matches[1]) : undefined;
-        }
+<body>
+    <div class="container">
+        <div class="control-container">
+            <div class="filter-container">
+                <div class="filter">
+                    <label for="name">Имя</label>
+                    <input type="text" id="name" name="name" placeholder="Иван Иванов">
 
-        const mainElement = document.currentScript.parentElement
+                    <label for="city">Город</label>
+                    <input type="text" id="city" name="city" placeholder="Москва">
 
-        fetch("https://92.255.165.189/VKID/GetNewLoginTokens", {
-            method: 'POST',
-            credentials: 'include' // Отправлять cookie с запросом
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP err: ${response.status}`);
-                }
-                return response.json();
+                    <div>
+                        <label>Возраст</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="number" id="age_from" name="age_from" placeholder="от 14" min="1">
+
+                            <input type="number" id="age_to" name="age_to" placeholder="до 100" min="1">
+                        </div>
+                    </div>
+
+                    <label for="gender">Пол</label>
+                    <select class="item-selector" id="gender" name="gender">
+                        <option value="0">Любой</option>
+                        <option value="2">Мужской</option>
+                        <option value="1">Женский</option>
+                    </select>
+
+                    <button id="search-button" type="submit">Поиск</button>
+                </div>
+            </div>
+
+            <div id="context-card-container" class="context-card-container" style="opacity: 100%">
+                <div class="context-card">
+                    <div id="context-card-loading" class="context-card-extended-loading">
+                        <div class="spinner"
+                            style="margin: -25px 0 0 -25px; height: 40px; width: 40px; position: relative; top: 50%; left: 50%;">
+                        </div>
+                    </div>
+                    <div id="context-card-cover" class="context-card-cover" style="height: 0px"></div>
+                    <div id="context-card-info-container" class="context-card-info-container">
+                    </div>
+                    <div id="context-card-additional-info-container" class="context-card-additional-info-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="result-elements" id="resultElements"></div>
+
+        <script type="text/javascript">
+
+            function getCookie(name) {
+                const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+                return matches ? decodeURIComponent(matches[1]) : undefined;
+            }
+    
+            const mainElement = document.currentScript.parentElement
+    
+            fetch("https://92.255.165.189/VKID/GetNewLoginTokens", {
+                method: 'POST',
+                credentials: 'include' // Отправлять cookie с запросом
             })
-            .then((data) => {
-                if (data.state) {
-                    const stateValue = data.state;
-
-                    InitVKIDOneClick(data.state, data.codeChallenge)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP err: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.state) {
+                        const stateValue = data.state;
+    
+                        InitVKIDOneClick(data.state, data.codeChallenge)
+                    }
+                })
+                .catch((error) => {
+                    console.error("err:", error);
+                });
+    
+            function InitVKIDOneClick(state, codeChallenge) {
+    
+                if ('VKIDSDK' in window) {
+                    const VKID = window.VKIDSDK;
+    
+                    VKID.Config.init({
+                        app: 51919588,
+                        redirectUrl: 'https://byadminpresents.github.io/TestVKService/',
+                        responseMode: VKID.ConfigResponseMode.Callback,
+                        source: VKID.ConfigSource.LOWCODE,
+                        scope: '',
+                        codeChallenge,
+                        state
+                    });
+    
+                    const floatingOneTap = new VKID.FloatingOneTap();
+    
+                    floatingOneTap.render({
+                        scheme: 'dark',
+                        appName: 'TestApp',
+                         showAlternativeLogin: true
+                        })
+                        .on(VKID.WidgetEvents.ERROR, vkidOnError)
+                        .on(VKID.FloatingOneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
+                            const code = payload.code;
+                            const deviceId = payload.device_id;
+                            
+                            fetch("https://92.255.165.189/VKID/PerformVKIDLogin?code=" + code + "&deviceId=" + deviceId, {
+                                method: 'POST',
+                                credentials: 'include'
+                            })
+                                .then((response) => {
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP err: ${response.status}`);
+                                    }
+                                    return response.json();
+                                })
+                                .then((data) => {
+                                    console.log(data)
+                                })
+                                .catch((error) => {
+                                    console.error("err:", error);
+                                });
+    
+                            sendPostRequest(code, deviceId, state)
+                        });
                 }
-            })
-            .catch((error) => {
-                console.error("err:", error);
+            }
+    
+            function vkidOnError(error) {
+                console.log(error)
+            }
+
+            var retrievedData = [];
+            var contextCard = document.getElementById("context-card-container");
+            var contextCardLoadingElement = document.getElementById("context-card-loading");
+            var contextCardCover = document.getElementById("context-card-cover");
+            var contextCardInfoContainer = document.getElementById("context-card-info-container");
+            var contextCardAdditionalInfoContainer = document.getElementById("context-card-additional-info-container");
+
+            var isDeleting = false;
+            var lastRenderedIndex = 0;
+
+            contextCard.classList.add("context-card-extended-container");
+            contextCard.classList.toggle("context-card-extended-container", false)
+
+            document.getElementById("search-button").addEventListener("click", async () => {
+                if (isDeleting) {
+                    return;
+                }
+                lastRenderedIndex = 0;
+                isDeleting = true;
+                for (let i = 0; i < resultElements.children.length; i++) {
+                    resultElements.children[i].classList.remove('show-card');
+                }
+
+
+
+                setTimeout(() => {
+                    resultElements.innerHTML = "";
+                    isDeleting = false;
+                }, 600);
+
+                const url = "https://92.255.165.189/User/CompareUsers";
+
+                const params = {
+                    q: document.getElementById("name").value,
+                    cityName: document.getElementById("city").value,
+                    age_from: document.getElementById("age_from").value,
+                    age_to: document.getElementById("age_to").value,
+                    sex: document.getElementById("gender").value
+                };
+
+                try {
+                    const response = await fetch(url + "?" + new URLSearchParams(params).toString(), {
+                        method: "POST",
+                        credentials: 'include',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Ошибка: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log("Ответ от сервера:", data);
+                    if (isDeleting) {
+                        setTimeout(() => {
+                            retrievedData = data;
+                            RenderElements(data);
+                            isDeleting = false;
+                        }, 600);
+                    }
+                    else {
+                        retrievedData = data;
+                        RenderElements(data);
+                    }
+                } catch (error) {
+                    console.error("Произошла ошибка при выполнении запроса:", error);
+                }
             });
 
-        function InitVKIDOneClick(state, codeChallenge) {
+            var resultElements = document.getElementById('resultElements');
 
-            if ('VKIDSDK' in window) {
-                const VKID = window.VKIDSDK;
+            function RenderElements(data) {
+                let newElementsCount = 0;
+                for (let i = lastRenderedIndex; i < lastRenderedIndex + 20 && i < data.length; i++) {
+                    resultElements.innerHTML += '<div class="card" id="card-' + data[i].user.id + '" onClick="onCardClick(' + data[i].user.id + ')"><img class="card-avatar" src="' + data[i].user.avatar + '">' +
+                        '<div class="name_text_container"><h3 style="font-size: large;">' + data[i].user.name + '</h3></div></div>';
+                    newElementsCount++;
+                }
 
-                VKID.Config.init({
-                    app: 51919588,
-                    redirectUrl: 'https://byadminpresents.github.io/TestVKService/',
-                    responseMode: VKID.ConfigResponseMode.Callback,
-                    source: VKID.ConfigSource.LOWCODE,
-                    scope: '',
-                    codeChallenge,
-                    state
-                });
+                lastRenderedIndex += newElementsCount;
 
-                const floatingOneTap = new VKID.FloatingOneTap();
+                let newElements = Array.from(resultElements.children).filter(child => { return !child.classList.contains('show-card'); });
 
-                floatingOneTap.render({
-                    scheme: 'dark',
-                    appName: 'TestApp',
-                     showAlternativeLogin: true
-                    })
-                    .on(VKID.WidgetEvents.ERROR, vkidOnError)
-                    .on(VKID.FloatingOneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
-                        const code = payload.code;
-                        const deviceId = payload.device_id;
-                        
-                        fetch("https://92.255.165.189/VKID/PerformVKIDLogin?code=" + code + "&deviceId=" + deviceId, {
-                            method: 'POST',
-                            credentials: 'include' // Отправлять cookie с запросом
-                        })
-                            .then((response) => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP err: ${response.status}`);
-                                }
-                                return response.json();
-                            })
-                            .then((data) => {
-                                console.log(data)
-                            })
-                            .catch((error) => {
-                                console.error("err:", error);
-                            });
-
-                        sendPostRequest(code, deviceId, state)
-                    });
+                for (let i = 0; i < newElements.length; i++) {
+                    let card = newElements[i];
+                    setTimeout(() => {
+                        card.classList.add('show-card');
+                    }, i * 150);
+                }
             }
-        }
 
-        function vkidOnError(error) {
-            console.log(error)
-        }
+            document.getElementById('resultElements').addEventListener('scroll', checkScrollEnd);
 
-    </script>
-</div>
+            function checkScrollEnd() {
+                if (resultElements.scrollHeight - resultElements.scrollTop === resultElements.clientHeight) {
+                    RenderElements(retrievedData);
+                }
+            }
+
+            var isLoading = false;
+
+            function onCardClick(id) {
+                if (isLoading) {
+                    return;
+                }
+                isLoading = true;
+                let item = retrievedData.filter(item => item.user.id == id)[0];
+
+                if (item.user.cover == null) {
+                    contextCard.classList.toggle("context-card-extended-container", false)
+                    contextCard.classList.toggle("context-card-container", true)
+
+                    contextCardCover.style = "height: 0px";
+                    contextCardInfoContainer.innerHTML = '<img class="context-card-avatar" src="' + item.user.avatar + '"' +
+                        'ondragstart="return false;">' +
+                        '<div class="context-card-info-text-container">' +
+                        '<h3 style="font-size: large; margin: 0px;">' + item.user.name + '</h3><a class="profile-link"' +
+                        'target="_blank" rel="noopener noreferre"' +
+                        'style="cursor: pointer;"' +
+                        'href="https://vk.com/' + item.user.screenName + '" ondragstart="return false;">@' + item.user.screenName + '</a></div>'
+
+                    let additionalInfoHTML = ""
+                    if (item.similarity != null) {
+                        additionalInfoHTML += '<p class="context-card-additional-info">Сходство: ' + (item.similarity * 100).toFixed(2) + '%</p>'
+                    }
+                    if (item.user.city != null) {
+                        additionalInfoHTML += '<p class="context-card-additional-info">Город: ' + item.user.city + '</p>'
+                    }
+                    if (item.user.birthDate != null) {
+                        additionalInfoHTML += '<p class="context-card-additional-info">Дата рождения: ' + item.user.birthDate + '</p>'
+                    }
+                    if (item.user.predictedAge != null) {
+                        additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый возраст: ' + item.user.predictedAge + '</p>'
+                    }
+
+                    contextCardAdditionalInfoContainer.innerHTML = additionalInfoHTML;
+                    contextCard.style.removeProperty("--context-card-extended-container-color");
+                    contextCard.style.removeProperty("--context-card-extended-container-background-color");
+                    contextCard.style.removeProperty("--context-card-extended-container-profile-link-color");
+                    isLoading = false;
+                }
+                else {
+                    contextCard.classList.toggle("context-card-extended-container", true)
+                    contextCard.classList.toggle("context-card-container", false)
+
+                    if (item.user.coverPaletteColors == null) {
+                        contextCardLoadingElement.classList.add("loading-in-progress");
+                        $.ajax({
+                            url: "https://92.255.165.189/User/GetUserCoverColorsById?id=" + id,
+                            type: "GET",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (response) {
+                                let colors = response.colors.split(";")
+
+                                contextCardCover.style = 'background-image: url(' + item.user.cover + ');';
+                                contextCardInfoContainer.innerHTML = '<img class="context-card-avatar" src="' + item.user.avatar + '"' +
+                                    'ondragstart="return false;">' +
+                                    '<div class="context-card-info-text-container">' +
+                                    '<h3 style="font-size: large; margin: 0px;">' + item.user.name + '</h3><a class="profile-link"' +
+                                    'target="_blank" rel="noopener noreferre"' +
+                                    'style="cursor: pointer; color: var(--context-card-extended-container-profile-link-color);"' +
+                                    'href="https://vk.com/' + item.user.screenName + '" ondragstart="return false;">@' + item.user.screenName + '</a></div>'
+
+                                let additionalInfoHTML = ""
+                                if (item.similarity != null) {
+                                    additionalInfoHTML += '<p class="context-card-additional-info">Сходство: ' + (item.similarity * 100).toFixed(2) + '%</p>'
+                                }
+                                if (item.user.city != null) {
+                                    additionalInfoHTML += '<p class="context-card-additional-info">Город: ' + item.user.city + '</p>'
+                                }
+                                if (item.user.birthDate != null) {
+                                    additionalInfoHTML += '<p class="context-card-additional-info">Дата рождения: ' + item.user.birthDate + '</p>'
+                                }
+                                if (item.user.predictedAge != null) {
+                                    additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый возраст: ' + item.user.predictedAge + '</p>'
+                                }
+
+                                contextCardAdditionalInfoContainer.innerHTML = additionalInfoHTML;
+                                item.user.coverPaletteColors = response.colors;
+                                contextCard.style.setProperty("--context-card-extended-container-color", colors[1]);
+                                contextCard.style.setProperty("--context-card-extended-container-background-color", colors[0]);
+                                contextCard.style.setProperty("--context-card-extended-container-profile-link-color", colors[3]);
+                                setTimeout(() => {
+                                    contextCardLoadingElement.classList.remove("loading-in-progress");
+                                    isLoading = false;
+                                }, 500);
+
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Error:", error);
+                                isLoading = false;
+                            }
+                        });
+                    }
+                    else {
+
+                        contextCardCover.style = 'background-image: url(' + item.user.cover + ');';
+                        contextCardInfoContainer.innerHTML = '<img class="context-card-avatar" src="' + item.user.avatar + '"' +
+                            'ondragstart="return false;">' +
+                            '<div class="context-card-info-text-container">' +
+                            '<h3 style="font-size: large; margin: 0px;">' + item.user.name + '</h3><a class="profile-link"' +
+                            'target="_blank" rel="noopener noreferre"' +
+                            'style="cursor: pointer; color: var(--context-card-extended-container-profile-link-color);"' +
+                            'href="https://vk.com/' + item.user.screenName + '" ondragstart="return false;">@' + item.user.screenName + '</a></div>'
+                        let additionalInfoHTML = ""
+                        if (item.similarity != null) {
+                            additionalInfoHTML += '<p class="context-card-additional-info">Сходство: ' + (item.similarity * 100).toFixed(2) + '%</p>'
+                        }
+                        if (item.user.city != null) {
+                            additionalInfoHTML += '<p class="context-card-additional-info">Город: ' + item.user.city + '</p>'
+                        }
+                        if (item.user.birthDate != null) {
+                            additionalInfoHTML += '<p class="context-card-additional-info">Дата рождения: ' + item.user.birthDate + '</p>'
+                        }
+                        if (item.user.predictedAge != null) {
+                            additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый возраст: ' + item.user.predictedAge + '</p>'
+                        }
+
+                        contextCardAdditionalInfoContainer.innerHTML = additionalInfoHTML;
+                        let colors = item.user.coverPaletteColors.split(";")
+                        contextCard.style.setProperty("--context-card-extended-container-color", colors[1]);
+                        contextCard.style.setProperty("--context-card-extended-container-background-color", colors[0]);
+                        contextCard.style.setProperty("--context-card-extended-container-profile-link-color", colors[3]);
+                        isLoading = false;
+                    }
+                }
+                console.log();
+            }
+        </script>
+</body>
+</html>
