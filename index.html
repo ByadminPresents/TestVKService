@@ -236,7 +236,7 @@
             document.getElementById('resultElements').addEventListener('scroll', checkScrollEnd);
 
             function checkScrollEnd() {
-                if (resultElements.scrollHeight - resultElements.scrollTop === resultElements.clientHeight) {
+                if (resultElements.scrollHeight - resultElements.scrollTop >= resultElements.clientHeight - 5 && resultElements.scrollHeight - resultElements.scrollTop <= resultElements.clientHeight + 5 ) {
                     RenderElements(retrievedData);
                 }
             }
