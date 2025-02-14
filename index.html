@@ -42,6 +42,35 @@
                 </div>
             </div>
 
+            <div class="param_container">
+                <p>Настройка весов</p>
+                <div class="param" data-param="Город">
+                    <label>Город</label>
+                    <input type="range" min="0" max="1" step="0.01" value="0.3" class="slider">
+                    <input type="number" min="0" max="5" step="0.1" value="0.3" class="num-input">
+                </div>
+                <div class="param" data-param="Возраст">
+                    <label>Возраст</label>
+                    <input type="range" min="0" max="1" step="0.01" value="0.3" class="slider">
+                    <input type="number" min="0" max="5" step="0.1" value="0.3" class="num-input">
+                </div>
+                <div class="param" data-param="Факультет">
+                    <label>Факультет</label>
+                    <input type="range" min="0" max="1" step="0.01" value="0.2" class="slider">
+                    <input type="number" min="0" max="5" step="0.1" value="0.2" class="num-input">
+                </div>
+                <div class="param" data-param="Общие друзья">
+                    <label>Друзья</label>
+                    <input type="range" min="0" max="1" step="0.01" value="0.3" class="slider">
+                    <input type="number" min="0" max="5" step="0.1" value="0.3" class="num-input">
+                </div>
+                <div class="param" data-param="Интересы">
+                    <label>Интересы</label>
+                    <input type="range" min="0" max="1" step="0.01" value="0.3" class="slider">
+                    <input type="number" min="0" max="5" step="0.1" value="0.3" class="num-input">
+                </div>
+            </div>
+
             <div id="context-card-container" class="context-card-container" style="opacity: 100%">
                 <div class="context-card">
                     <div id="context-card-loading" class="context-card-extended-loading">
@@ -371,6 +400,21 @@
                 }
                 console.log();
             }
+
+                        document.querySelectorAll(".param").forEach(param => {
+            const slider = param.querySelector(".slider");
+            const numInput = param.querySelector(".num-input");
+            
+            slider.addEventListener("input", () => {
+                numInput.value = slider.value;
+            });
+            
+            numInput.addEventListener("input", () => {
+                let value = Math.min(5, Math.max(0, numInput.value));
+                numInput.value = value;
+                slider.value = Math.min(1, Math.max(0, numInput.value));
+            });
+        });
         </script>
 </body>
 </html>
