@@ -114,6 +114,7 @@
 }
 
 .context-card-additional-info {
+    white-space: pre;
     margin: 0;
     color: #dfdfdf;
 }
