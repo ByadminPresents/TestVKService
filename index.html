@@ -186,7 +186,7 @@
             paramWeights = [0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
 
             displaySimilarities = false
-            currentCardId = 0
+            currentCardId = -1
             
             var isDeleting = false;
             var lastRenderedIndex = 0;
@@ -290,7 +290,7 @@
                     }
                     weightsSum += Object.values(simObject).filter(val => val === -1).length * 0.2
                     similarity = sum / weightsSum
-                    return {...item, similarity};
+                    return item;
                 }).sort((a, b) => b.similarity - a.similarity)
             }
 
@@ -503,10 +503,15 @@
                     resultElements.children[i].classList.remove('show-card');
                 }
 
+                retrievedData = CalculateSimilarities(retrievedData, paramWeights)
+                if (currentCardId !== -1)
+                {
+                    onCardClick(currentCardId)
+                }
+
                 setTimeout(() => {
                     resultElements.innerHTML = "";
                     isDeleting = false;
-                    retrievedData = CalculateSimilarities(retrievedData, paramWeights)
                     RenderElements(retrievedData);
                 }, 600);
             });
@@ -522,10 +527,15 @@
                     resultElements.children[i].classList.remove('show-card');
                 }
 
+                retrievedData = CalculateSimilarities(retrievedData, paramWeights)
+                if (currentCardId !== -1)
+                {
+                    onCardClick(currentCardId)
+                }
+
                 setTimeout(() => {
                     resultElements.innerHTML = "";
                     isDeleting = false;
-                    retrievedData = CalculateSimilarities(retrievedData, paramWeights)
                     RenderElements(retrievedData);
                 }, 600);
             });
