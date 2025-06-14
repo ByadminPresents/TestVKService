@@ -285,7 +285,7 @@
                         sum += simObject.keyWords * weights[5]
                         weightsSum += weights[5]
                     }
-                    weightsSum += simObject.filter(val => val === -1).length * 0.2
+                    weightsSum += Object.values(simObject).filter(val => val === -1).length * 0.2
                     similarity = sum / weightsSum
                     return {...item, similarity};
                 }).sort((a, b) => b.similarity - a.similarity)
