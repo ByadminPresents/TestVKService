@@ -285,7 +285,7 @@
                         sum += simObject.keyWords * weights[5]
                         weightsSum += weights[5]
                     }
-                    similarity = sum / weights.reduce((a, b) => a + b, 0)
+                    similarity = sum / weightsSum
                     return {...item, similarity};
                 }).sort((a, b) => b.similarity - a.similarity)
             }
