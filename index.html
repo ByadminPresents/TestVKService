@@ -184,6 +184,9 @@
             var contextCardAdditionalInfoContainer = document.getElementById("context-card-additional-info-container");
 
             paramWeights = [0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+
+            displaySimilarities = false
+            currentCardId = 0
             
             var isDeleting = false;
             var lastRenderedIndex = 0;
@@ -325,7 +328,9 @@
                 if (isLoading) {
                     return;
                 }
+                currentCardId = id
                 isLoading = true;
+                try {
                 let item = retrievedData.filter(item => item.user.id == id)[0];
 
                 if (item.user.cover == null) {
@@ -342,6 +347,14 @@
                         'href="https://vk.com/' + item.user.screenName + '" ondragstart="return false;">@' + item.user.screenName + '</a></div>'
 
                     let additionalInfoHTML = ""
+                        if (displaySimilarities)
+                        {
+                            additionalInfoHTML += '<p class="context-card-additional-info">' + ('Возраст: ' + (item.similarities.age === -1 ? "-" : ((item.similarities.age * 100).toFixed(2) + '%'))).padEnd(24, " ") + 'Друзья: ' + (item.similarities.friends === -1 ? "-" : ((item.similarities.friends * 100).toFixed(2) + '%')) + '</p>'
+                            additionalInfoHTML += '<p class="context-card-additional-info">' + ('Город: ' + (item.similarities.city === -1 ? "-" : ((item.similarities.city * 100).toFixed(2) + '%'))).padEnd(26, " ") + 'Интересы: ' + (item.similarities.interests === -1 ? "-" : ((item.similarities.interests * 100).toFixed(2) + '%')) + '</p>'
+                            additionalInfoHTML += '<p class="context-card-additional-info">' + ('Факультет: ' + (item.similarities.faculty === -1 ? "-" : ((item.similarities.faculty * 100).toFixed(2) + '%'))).padEnd(30, " ") + 'Ключ. слова: ' + (item.similarities.keyWords === -1 ? "-" : ((item.similarities.keyWords * 100).toFixed(2)) + '%') + '</p>'
+                        }
+                        else
+                        {
                     if (item.similarity != null) {
                         additionalInfoHTML += '<p class="context-card-additional-info">Сходство: ' + (item.similarity * 100).toFixed(2) + '%</p>'
                     }
@@ -354,6 +367,7 @@
                     if (item.user.predictedAge != null) {
                         additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый возраст: ' + item.user.predictedAge + '</p>'
                     }
+                }
 
                     contextCardAdditionalInfoContainer.innerHTML = additionalInfoHTML;
                     contextCard.style.removeProperty("--context-card-extended-container-color");
@@ -385,6 +399,14 @@
                                     'href="https://vk.com/' + item.user.screenName + '" ondragstart="return false;">@' + item.user.screenName + '</a></div>'
 
                                 let additionalInfoHTML = ""
+                                if (displaySimilarities)
+                                {
+                                    additionalInfoHTML += '<p class="context-card-additional-info">' + ('Возраст: ' + (item.similarities.age === -1 ? "-" : ((item.similarities.age * 100).toFixed(2) + '%'))).padEnd(24, " ") + 'Друзья: ' + (item.similarities.friends === -1 ? "-" : ((item.similarities.friends * 100).toFixed(2) + '%')) + '</p>'
+                                    additionalInfoHTML += '<p class="context-card-additional-info">' + ('Город: ' + (item.similarities.city === -1 ? "-" : ((item.similarities.city * 100).toFixed(2) + '%'))).padEnd(26, " ") + 'Интересы: ' + (item.similarities.interests === -1 ? "-" : ((item.similarities.interests * 100).toFixed(2) + '%')) + '</p>'
+                                    additionalInfoHTML += '<p class="context-card-additional-info">' + ('Факультет: ' + (item.similarities.faculty === -1 ? "-" : ((item.similarities.faculty * 100).toFixed(2) + '%'))).padEnd(30, " ") + 'Ключ. слова: ' + (item.similarities.keyWords === -1 ? "-" : ((item.similarities.keyWords * 100).toFixed(2)) + '%') + '</p>'
+                                }
+                                else
+                                {
                                 if (item.similarity != null) {
                                     additionalInfoHTML += '<p class="context-card-additional-info">Сходство: ' + (item.similarity * 100).toFixed(2) + '%</p>'
                                 }
@@ -396,6 +418,7 @@
                                 }
                                 if (item.user.predictedAge != null) {
                                     additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый возраст: ' + item.user.predictedAge + '</p>'
+                                }
                                 }
 
                                 contextCardAdditionalInfoContainer.innerHTML = additionalInfoHTML;
@@ -426,6 +449,14 @@
                             'style="cursor: pointer; color: var(--context-card-extended-container-profile-link-color);"' +
                             'href="https://vk.com/' + item.user.screenName + '" ondragstart="return false;">@' + item.user.screenName + '</a></div>'
                         let additionalInfoHTML = ""
+                        if (displaySimilarities)
+                        {
+                            additionalInfoHTML += '<p class="context-card-additional-info">' + ('Возраст: ' + (item.similarities.age === -1 ? "-" : ((item.similarities.age * 100).toFixed(2) + '%'))).padEnd(24, " ") + 'Друзья: ' + (item.similarities.friends === -1 ? "-" : ((item.similarities.friends * 100).toFixed(2) + '%')) + '</p>'
+                            additionalInfoHTML += '<p class="context-card-additional-info">' + ('Город: ' + (item.similarities.city === -1 ? "-" : ((item.similarities.city * 100).toFixed(2) + '%'))).padEnd(26, " ") + 'Интересы: ' + (item.similarities.interests === -1 ? "-" : ((item.similarities.interests * 100).toFixed(2) + '%')) + '</p>'
+                            additionalInfoHTML += '<p class="context-card-additional-info">' + ('Факультет: ' + (item.similarities.faculty === -1 ? "-" : ((item.similarities.faculty * 100).toFixed(2) + '%'))).padEnd(30, " ") + 'Ключ. слова: ' + (item.similarities.keyWords === -1 ? "-" : ((item.similarities.keyWords * 100).toFixed(2)) + '%') + '</p>'
+                        }
+                        else
+                        {
                         if (item.similarity != null) {
                             additionalInfoHTML += '<p class="context-card-additional-info">Сходство: ' + (item.similarity * 100).toFixed(2) + '%</p>'
                         }
@@ -437,6 +468,7 @@
                         }
                         if (item.user.predictedAge != null) {
                             additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый возраст: ' + item.user.predictedAge + '</p>'
+                        }
                         }
 
                         contextCardAdditionalInfoContainer.innerHTML = additionalInfoHTML;
@@ -493,6 +525,10 @@
                 }, 600);
             });
         });
+        contextCard.addEventListener("click", (e) => {
+                displaySimilarities = !displaySimilarities
+                onCardClick(currentCardId)
+            });
         </script>
 </body>
 </html>
