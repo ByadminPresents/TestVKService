@@ -479,8 +479,13 @@
                         isLoading = false;
                     }
                 }
-                console.log();
+            } catch (error)
+            {
+                console.log(error)
+                isLoading = false
             }
+            }
+                
 
                         document.querySelectorAll(".param").forEach(param => {
             const slider = param.querySelector(".slider");
