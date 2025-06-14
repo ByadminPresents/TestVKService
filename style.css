@@ -421,7 +421,7 @@ html {
 
 .param_container {
     height: 100%;
-    max-height: 240px;
+    max-height: 270px;
     background-color: #454545;
     align-items: center;
     display: flex;
