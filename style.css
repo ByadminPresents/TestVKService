@@ -64,7 +64,7 @@
 
 
 .context-card-extended-container>.context-card {
-    height: 264px;
+    height: 284px;
     color: var(--context-card-extended-container-color);
     background-color: var(--context-card-extended-container-background-color);
 }
