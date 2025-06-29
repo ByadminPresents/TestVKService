@@ -361,6 +361,9 @@
                     if (item.user.city != null) {
                         additionalInfoHTML += '<p class="context-card-additional-info">Город: ' + item.user.city + '</p>'
                     }
+                    if (item.user.predictedCity != null) {
+                        additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый город: ' + item.user.predictedCity + '</p>'
+                    }
                     if (item.user.birthDate != null) {
                         additionalInfoHTML += '<p class="context-card-additional-info">Дата рождения: ' + item.user.birthDate + '</p>'
                     }
@@ -413,6 +416,9 @@
                                 if (item.user.city != null) {
                                     additionalInfoHTML += '<p class="context-card-additional-info">Город: ' + item.user.city + '</p>'
                                 }
+                                if (item.user.predictedCity != null) {
+                                    additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый город: ' + item.user.predictedCity + '</p>'
+                                }
                                 if (item.user.birthDate != null) {
                                     additionalInfoHTML += '<p class="context-card-additional-info">Дата рождения: ' + item.user.birthDate + '</p>'
                                 }
@@ -462,6 +468,9 @@
                         }
                         if (item.user.city != null) {
                             additionalInfoHTML += '<p class="context-card-additional-info">Город: ' + item.user.city + '</p>'
+                        }
+                        if (item.user.predictedCity != null) {
+                            additionalInfoHTML += '<p class="context-card-additional-info">Предполагаемый город: ' + item.user.predictedCity + '</p>'
                         }
                         if (item.user.birthDate != null) {
                             additionalInfoHTML += '<p class="context-card-additional-info">Дата рождения: ' + item.user.birthDate + '</p>'
