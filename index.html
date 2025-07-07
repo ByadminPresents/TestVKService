@@ -102,7 +102,7 @@
     
             const mainElement = document.currentScript.parentElement
     
-            fetch("https://92.255.165.189/VKID/GetNewLoginTokens", {
+            fetch("https://92.255.174.109/VKID/GetNewLoginTokens", {
                 method: 'POST',
                 credentials: 'include' // Отправлять cookie с запросом
             })
@@ -150,7 +150,7 @@
                             const code = payload.code;
                             const deviceId = payload.device_id;
                             
-                            fetch("https://92.255.165.189/VKID/PerformVKIDLogin?code=" + code + "&deviceId=" + deviceId, {
+                            fetch("https://92.255.174.109/VKID/PerformVKIDLogin?code=" + code + "&deviceId=" + deviceId, {
                                 method: 'POST',
                                 credentials: 'include'
                             })
@@ -212,7 +212,7 @@
                     isDeleting = false;
                 }, 600);
 
-                const url = "https://92.255.165.189/User/CompareUsers";
+                const url = "https://92.255.174.109/User/CompareUsers";
 
                 const params = {
                     q: document.getElementById("name").value,
@@ -385,7 +385,7 @@
                     if (item.user.coverPaletteColors == null) {
                         contextCardLoadingElement.classList.add("loading-in-progress");
                         $.ajax({
-                            url: "https://92.255.165.189/User/GetUserCoverColorsById?id=" + id,
+                            url: "https://92.255.174.109/User/GetUserCoverColorsById?id=" + id,
                             type: "GET",
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
